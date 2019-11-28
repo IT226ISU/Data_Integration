@@ -1,10 +1,11 @@
 package it226;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Run {
-	
+	JButton add,saveR,saveT;
 	private static void createAndShowGUI() {
 		JFrame frame = new JFrame("Alarms");
 		JPanel pane=new JPanel();
