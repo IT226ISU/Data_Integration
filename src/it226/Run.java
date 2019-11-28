@@ -5,10 +5,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Run {
-	JButton add,saveR,saveT;
-	private static void createAndShowGUI() {
-		JFrame frame = new JFrame("Alarms");
+	JButton addButton,saveRButton,saveTButton;
+	private void createAndShowGUI() {
+		JFrame frame = new JFrame("Data Integration");
 		JPanel pane=new JPanel();
+		
+		addButton=new JButton("Add Data");
 	
 		frame.add(pane);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,9 +24,11 @@ public class Run {
 	public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
+		
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+            	Run r=new Run();
+                r.createAndShowGUI();
             }
         });
     }
