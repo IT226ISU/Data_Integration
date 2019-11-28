@@ -2,7 +2,8 @@ package it226;
 
 
 
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,29 +17,44 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class Run implements ActionListener{
-	JButton addButton,saveRButton,saveTButton,exportRButton,exportTButton;
+	JButton addButton,addRButton,addTButton,exportRButton,exportTButton;
+	
 	JPanel mainPanel,buttonPanel,viewerPanel;
 	JScrollPane viewerScrollPane;
-	JTextArea viewer;
-	JTextField lookupTR;
-	ButtonGroup lookupButtonGroup;
-	JRadioButton lookupT,lookupR;
-	GridBagLayout layout1;
+	//JTextArea viewer; Will add if there is time.
+	//JTextField lookupTR;
+	//ButtonGroup lookupButtonGroup;
+	//JRadioButton lookupT,lookupR;
+	
 	private Run() {
 		createAndShowGUI();
 	}
 	
 	private void createAndShowGUI() {
 		JFrame frame = new JFrame("Data Integration");
-		layout1=new GridBagLayout();
-		JPanel pane=new JPanel(layout1);
+		
 		addButton=buttonMaker("Add Data from File","This button allows you to add data from a csv file");
-		saveRButton=buttonMaker("Add New Relationship","This button allows you to input a new relationship");
-		saveTButton=buttonMaker("Add New Term","This button allows you to input a new Term");
+		addRButton=buttonMaker("Add New Relationship","This button allows you to input a new relationship");
+		addTButton=buttonMaker("Add New Term","This button allows you to input a new Term");
 		exportRButton=buttonMaker("Export Relationship Data","This button allows you to export data pertaining to a Relationship");
 		exportTButton=buttonMaker("Export Term Data","This button allows you to export data pertaining to a Term");
 		
-		frame.add(pane);
+		JButton emptyBox=new JButton();
+		emptyBox.setEnabled(false);
+		emptyBox.setVisible(false);
+		
+		
+		GridLayout buttonGrid=new GridLayout(2,3);
+		buttonPanel=new JPanel(buttonGrid);
+		
+		buttonPanel.add(addButton);
+		buttonPanel.add(addTButton);
+		buttonPanel.add(addRButton);
+		buttonPanel.add(emptyBox);
+		buttonPanel.add(exportTButton);
+		buttonPanel.add(exportRButton);
+		
+		frame.add(buttonPanel,BorderLayout.PAGE_END);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
