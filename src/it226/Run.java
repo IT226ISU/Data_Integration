@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class Run implements ActionListener{
-	JButton addButton,addRButton,addTButton,exportRButton,exportTButton;
+	JButton addButton,addRButton,addTButton,exportRButton,exportTButton,resetButton;
 	
 	JPanel mainPanel,buttonPanel,viewerPanel;
 	JScrollPane viewerScrollPane;
@@ -39,9 +39,9 @@ public class Run implements ActionListener{
 		exportRButton=buttonMaker("Export Relationship Data","This button allows you to export data pertaining to a Relationship");
 		exportTButton=buttonMaker("Export Term Data","This button allows you to export data pertaining to a Term");
 		
-		JButton emptyBox=new JButton();
-		emptyBox.setEnabled(false);
-		emptyBox.setVisible(false);
+		resetButton=buttonMaker("Reset Database","This will wipe the database and cannot be undone");
+		resetButton.setEnabled(false);
+		resetButton.setVisible(false);
 		
 		
 		GridLayout buttonGrid=new GridLayout(2,3);
@@ -50,7 +50,7 @@ public class Run implements ActionListener{
 		buttonPanel.add(addButton);
 		buttonPanel.add(addTButton);
 		buttonPanel.add(addRButton);
-		buttonPanel.add(emptyBox);
+		buttonPanel.add(resetButton);
 		buttonPanel.add(exportTButton);
 		buttonPanel.add(exportRButton);
 		
