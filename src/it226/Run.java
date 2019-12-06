@@ -25,7 +25,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Run implements ActionListener{
-	JButton addButton,addRButton,addTButton,exportRButton,exportTButton,resetButton;//ButtonBox
+	JButton addButton,addRButton,addTButton,exportRButton,exportTButton,exportXMLButton;//ButtonBox
 	JButton lookupButton,submitAddButton;
 	JPanel cards, mainPanel, addPanel, exportPanel;
 	JScrollPane viewerScrollPane;
@@ -45,7 +45,9 @@ public class Run implements ActionListener{
 		JFrame frame = new JFrame("Data Integration");
 		fc=new JFileChooser();
 		FileFilter f=new FileNameExtensionFilter("CSV File","csv");
+		//FileFilter f2=new FileNameExtensionFilter("XML","xml");
 		fc.setFileFilter(f);
+		//fc.addChoosableFileFilter(f2);
 		fc.setAcceptAllFileFilterUsed(false);
 		mainPanel=createMainPanel();
 		addPanel=createAddPanel();
@@ -67,15 +69,18 @@ public class Run implements ActionListener{
 		addButton=buttonMaker("Add Data from File","This button allows you to add data from a csv file");
 		addRButton=buttonMaker("Add New Relationship","This button allows you to input a new relationship");
 		addTButton=buttonMaker("Add New Term","This button allows you to input a new Term");
+		exportXMLButton=buttonMaker("Export Database","This button exports the database as an xml file");
 		exportRButton=buttonMaker("Export Relationship Data","This button allows you to export data pertaining to a Relationship");
 		exportTButton=buttonMaker("Export Term Data","This button allows you to export data pertaining to a Term");
-		resetButton=buttonMaker("Reset Database","This will wipe the database and cannot be undone");
+		
 		GridLayout buttonGrid=new GridLayout(2,3);
 		JPanel buttonPanel=new JPanel(buttonGrid);
 		buttonPanel.add(addButton);
 		buttonPanel.add(addTButton);
 		buttonPanel.add(addRButton);
-		buttonPanel.add(resetButton);
+		exportXMLButton.setEnabled(false);//not actually using this button, but I need it for the layout
+		exportXMLButton.setVisible(false);//hide the button so it doesn't show up.
+		buttonPanel.add(exportXMLButton);//add it so the alignment of the GridLayout stays as desired
 		buttonPanel.add(exportTButton);
 		buttonPanel.add(exportRButton);
 		//Radio Buttons
@@ -83,6 +88,9 @@ public class Run implements ActionListener{
 		lookupT.setSelected(true);
 		lookupR=new JRadioButton("RELA");
 		lookupC=new JRadioButton("CUI");
+		//lookupT.addActionListener(this);
+		//lookupR.addActionListener(this);
+		//lookupC.addActionListener(this);
 		lookupButtonGroup=new ButtonGroup();
 		lookupButtonGroup.add(lookupT);
 		lookupButtonGroup.add(lookupR);
@@ -102,7 +110,7 @@ public class Run implements ActionListener{
 		lookup.add(radioPanel);
 		lookup.add(look);
 		//Results box
-		viewer=new JTextArea(5,5);
+		viewer=new JTextArea(25,25);
 		viewer.setEditable(false);
 		viewerScrollPane=new JScrollPane(viewer);
 		
@@ -114,6 +122,7 @@ public class Run implements ActionListener{
 	}
 	private JPanel createAddPanel() {
 		addPanel=new JPanel();
+		
 		return addPanel;
 	}
 	private JPanel createExportPanel() {
@@ -136,9 +145,10 @@ public class Run implements ActionListener{
 			int returnVal=fc.showOpenDialog(null);
 			if (returnVal==JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
-				viewer.append("Opening: " + file.getName() + ".\n");
+				String readStatus=d.readFile(file);
+				viewer.setText(readStatus);
 			} else {
-				viewer.append("Open command cancelled by user.");
+				viewer.setText("Open command cancelled by user.");
 			}
 			viewer.setCaretPosition(viewer.getDocument().getLength());
 		}
@@ -151,8 +161,16 @@ public class Run implements ActionListener{
 		}
 		else if (e.getSource().equals(exportRButton)) {}
 		else if (e.getSource().equals(exportTButton)) {}
-		else if (e.getSource().equals(resetButton)) {}
-		else if (e.getSource().equals(lookupT)) {}
+		//else if (e.getSource().equals(exportXMLButton)) {}
+//		else if (e.getSource().equals(lookupT)) {
+//			viewer.setText("t");
+//		}
+//		else if(e.getSource().equals(lookupR)){
+//			viewer.setText("r");
+//		}
+//		else if(e.getSource().equals(lookupC)){
+//			viewer.setText("c");
+//		}
 
 		
 		
