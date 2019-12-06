@@ -104,11 +104,11 @@ public class Run implements ActionListener{
 		JLabel label=new JLabel("Lookup By: ");
 		lookupTRC=new JTextField(15);//Might become combo box
 		lookupTRC.requestFocusInWindow();
-		JButton look=buttonMaker("Search", "Search the database");
+		JButton lookupButton=buttonMaker("Search", "Search the database");
 		lookup.add(label);
 		lookup.add(lookupTRC);
 		lookup.add(radioPanel);
-		lookup.add(look);
+		lookup.add(lookupButton);
 		//Results box
 		viewer=new JTextArea(25,25);
 		viewer.setEditable(false);
@@ -171,7 +171,16 @@ public class Run implements ActionListener{
 //		else if(e.getSource().equals(lookupC)){
 //			viewer.setText("c");
 //		}
-
+		else if(e.getSource().equals(look)) {
+			if (lookupT.isSelected()){
+				
+			}else if (lookupR.isSelected()) {
+				Relationship.getAll()
+				
+			}else if (lookupC.isSelected()) {
+				
+			}
+		}
 		
 		
 	}
