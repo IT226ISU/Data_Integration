@@ -10,7 +10,6 @@ public class Relationship {
 	private Concept c1,c2;
 	private String RELA;
 	private static Map<String,List<Concept[]>> map=new LinkedHashMap<String, List<Concept[]>>();
-	
 	public Relationship(Concept c1,String RELA, Concept c2) {
 		this.c1=c1;
 		this.RELA=RELA;

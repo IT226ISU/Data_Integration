@@ -171,11 +171,15 @@ public class Run implements ActionListener{
 //		else if(e.getSource().equals(lookupC)){
 //			viewer.setText("c");
 //		}
-		else if(e.getSource().equals(look)) {
+		else if(e.getSource().equals(lookupButton)) {
 			if (lookupT.isSelected()){
 				
 			}else if (lookupR.isSelected()) {
-				Relationship.getAll()
+				if (lookupTRC.getText()!=null) {
+					for(Concept)
+					Relationship.getAll(lookupTRC.getText());
+				}
+				
 				
 			}else if (lookupC.isSelected()) {
 				
