@@ -9,7 +9,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -25,14 +24,16 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Run implements ActionListener{
-	JButton addButton,addRButton,addTButton,exportRButton,exportTButton,exportXMLButton;//ButtonBox
-	JButton lookupButton,submitAddButton;
+	//JButton addButton,addRButton,addTButton,exportRButton,exportTButton,exportXMLButton;//ButtonBox
+	JButton addButton,lookupButton,exportButton;
+	JButton okButton,cancelButton;
 	JPanel cards, mainPanel, addPanel, exportPanel;
 	JScrollPane viewerScrollPane;
 	JTextArea viewer; 
-	JTextField lookupTRC;
-	ButtonGroup lookupButtonGroup;
+	JTextField lookupTRC,exportTRC;
+	ButtonGroup lookupButtonGroup,exportButtonGroup;
 	JRadioButton lookupT,lookupR,lookupC;
+	JRadioButton exportT,exportR,exportC;
 	JFileChooser fc;
 	DatabaseManager d;
 	
@@ -50,11 +51,11 @@ public class Run implements ActionListener{
 		//fc.addChoosableFileFilter(f2);
 		fc.setAcceptAllFileFilterUsed(false);
 		mainPanel=createMainPanel();
-		addPanel=createAddPanel();
+		//addPanel=createAddPanel();
 		exportPanel=createExportPanel();
 		cards=new JPanel(new CardLayout());
 		cards.add(mainPanel,"main");
-		cards.add(addPanel,"add");
+		//cards.add(addPanel,"add");
 		cards.add(exportPanel,"export");
 		
 		frame.add(cards);
@@ -67,22 +68,26 @@ public class Run implements ActionListener{
 		
 		//button Panel;
 		addButton=buttonMaker("Add Data from File","This button allows you to add data from a csv file");
-		addRButton=buttonMaker("Add New Relationship","This button allows you to input a new relationship");
-		addTButton=buttonMaker("Add New Term","This button allows you to input a new Term");
-		exportXMLButton=buttonMaker("Export Database","This button exports the database as an xml file");
-		exportRButton=buttonMaker("Export Relationship Data","This button allows you to export data pertaining to a Relationship");
-		exportTButton=buttonMaker("Export Term Data","This button allows you to export data pertaining to a Term");
+		//addRButton=buttonMaker("Add New Relationship","This button allows you to input a new relationship");
+		//addTButton=buttonMaker("Add New Term","This button allows you to input a new Term");
+		//exportXMLButton=buttonMaker("Export Database","This button exports the database as an xml file");
+		//exportRButton=buttonMaker("Export Relationship Data","This button allows you to export data pertaining to a Relationship");
+		//exportTButton=buttonMaker("Export Term Data","This button allows you to export data pertaining to a Term");
+		lookupButton=buttonMaker("Search", "Search the database");
+		exportButton=buttonMaker("Export","Export the lookup data");
 		
-		GridLayout buttonGrid=new GridLayout(2,3);
+		//GridLayout buttonGrid=new GridLayout(2,3);
+		GridLayout buttonGrid=new GridLayout(1,2);
 		JPanel buttonPanel=new JPanel(buttonGrid);
 		buttonPanel.add(addButton);
-		buttonPanel.add(addTButton);
-		buttonPanel.add(addRButton);
-		exportXMLButton.setEnabled(false);//not actually using this button, but I need it for the layout
-		exportXMLButton.setVisible(false);//hide the button so it doesn't show up.
-		buttonPanel.add(exportXMLButton);//add it so the alignment of the GridLayout stays as desired
-		buttonPanel.add(exportTButton);
-		buttonPanel.add(exportRButton);
+		buttonPanel.add(exportButton);
+		//buttonPanel.add(addTButton);
+		//buttonPanel.add(addRButton);
+		//exportXMLButton.setEnabled(false);//not actually using this button, but I need it for the layout
+		//exportXMLButton.setVisible(false);//hide the button so it doesn't show up.
+		//buttonPanel.add(exportXMLButton);//add it so the alignment of the GridLayout stays as desired
+		//buttonPanel.add(exportTButton);
+		//buttonPanel.add(exportRButton);
 		//Radio Buttons
 		lookupT=new JRadioButton("STR");
 		lookupT.setSelected(true);
@@ -101,12 +106,14 @@ public class Run implements ActionListener{
 		radioPanel.add(lookupC);
 		//Other Components
 		JPanel lookup=new JPanel(new FlowLayout());
-		JLabel label=new JLabel("Lookup By: ");
-		lookupTRC=new JTextField(15);//Might become combo box
+		JLabel label=new JLabel("Lookup: ");
+		JLabel label2=new JLabel("By: ");
+		lookupTRC=new JTextField(15);
 		lookupTRC.requestFocusInWindow();
-		JButton lookupButton=buttonMaker("Search", "Search the database");
+		
 		lookup.add(label);
 		lookup.add(lookupTRC);
+		lookup.add(label2);
 		lookup.add(radioPanel);
 		lookup.add(lookupButton);
 		//Results box
@@ -120,13 +127,45 @@ public class Run implements ActionListener{
 		main.add(buttonPanel,BorderLayout.PAGE_END);
 		return main;
 	}
-	private JPanel createAddPanel() {
-		addPanel=new JPanel();
-		
-		return addPanel;
-	}
 	private JPanel createExportPanel() {
-		return new JPanel();
+		
+		cancelButton=buttonMaker("Cancel", "Return to Main Page");
+		okButton=buttonMaker("Export", "Save the data to the specified file");
+		GridLayout buttonGrid=new GridLayout(1,2);
+		JPanel buttonPanel=new JPanel(buttonGrid);
+		buttonPanel.add(cancelButton);
+		buttonPanel.add(okButton);
+		
+		
+		exportT=new JRadioButton("STR");
+		exportT.setSelected(true);
+		exportR=new JRadioButton("RELA");
+		exportC=new JRadioButton("CUI");
+		//lookupT.addActionListener(this);
+		//lookupR.addActionListener(this);
+		//lookupC.addActionListener(this);
+		exportButtonGroup=new ButtonGroup();
+		exportButtonGroup.add(exportT);
+		exportButtonGroup.add(exportR);
+		exportButtonGroup.add(exportC);
+		JPanel radioPanel=new JPanel(new FlowLayout());
+		exportTRC=new JTextField(15);
+		exportTRC.requestFocusInWindow();
+		
+		radioPanel.add(exportT);
+		radioPanel.add(exportR);
+		radioPanel.add(exportC);
+		JLabel label=new JLabel("Export by: ");
+		JPanel headPanel=new JPanel(new FlowLayout());
+		headPanel.add(label);
+		headPanel.add(radioPanel);
+		
+		
+		//JComboBox<String> exportItemT=new JComboBox<String>(d.getVector(DatabaseManager.STR));
+		JPanel export = new JPanel(new BorderLayout());
+		export.add(headPanel,BorderLayout.PAGE_START);
+		export.add(buttonPanel,BorderLayout.SOUTH);
+		return export;
 	}
 	
 
@@ -152,15 +191,31 @@ public class Run implements ActionListener{
 			}
 			viewer.setCaretPosition(viewer.getDocument().getLength());
 		}
-		else if (e.getSource().equals(addRButton)) {
-			//add0
-			c.show(cards, "add");
+		else if (e.getSource().equals(exportButton)){
+			String x="";
+			int returnVal=fc.showSaveDialog(null);
+			if (returnVal==JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				if (lookupTRC.getText()!=null) {
+					if (lookupT.isSelected()) {
+						x=d.writeCSV(DatabaseManager.STR,lookupTRC.getText(), file);
+					}
+					else if (lookupR.isSelected()) {
+						x=d.writeCSV(DatabaseManager.RELA,lookupTRC.getText(), file);
+					}
+					else if (lookupC.isSelected()) {
+						x=d.writeCSV(DatabaseManager.RELA,lookupTRC.getText(), file);
+					}
+				}
+				viewer.setText(x);
+			} else {
+				viewer.setText("Open command cancelled by user.");
+			}
+			viewer.setCaretPosition(viewer.getDocument().getLength());
 		}
-		else if (e.getSource().equals(addTButton)) {
-			c.show(cards, "add");
+		else if(e.getSource().equals(cancelButton)) {
+			c.show(cards, "main");
 		}
-		else if (e.getSource().equals(exportRButton)) {}
-		else if (e.getSource().equals(exportTButton)) {}
 		//else if (e.getSource().equals(exportXMLButton)) {}
 //		else if (e.getSource().equals(lookupT)) {
 //			viewer.setText("t");
@@ -172,21 +227,22 @@ public class Run implements ActionListener{
 //			viewer.setText("c");
 //		}
 		else if(e.getSource().equals(lookupButton)) {
-			if (lookupT.isSelected()){
-				
-			}else if (lookupR.isSelected()) {
-				if (lookupTRC.getText()!=null) {
-					for(Concept)
-					Relationship.getAll(lookupTRC.getText());
+			if (lookupT.isSelected()) {
+				if (lookupTRC.getText()!=null){
+					viewer.setText(d.lookupT(lookupTRC.getText()).replace(",", " "));
 				}
-				
-				
+			}
+			if (lookupR.isSelected()) {
+				if (lookupTRC.getText()!=null){
+					viewer.setText(d.lookupR(lookupTRC.getText()).replace(",", " "));
+				}
 			}else if (lookupC.isSelected()) {
-				
+				if (lookupTRC.getText()!=null){
+					viewer.setText(d.lookupC(lookupTRC.getText()).replace(",", " "));
+				}
 			}
 		}
-		
-		
+			
 	}
 	
 	public static void main(String[] args) {

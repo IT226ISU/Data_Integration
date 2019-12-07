@@ -3,27 +3,34 @@ package it226;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 public class DatabaseManager {
-	private Map<Concept,List<Relationship>> relMap=new LinkedHashMap<Concept, List<Relationship>>();
-	private Map<String,Concept> map=new LinkedHashMap<String, Concept>();
-	//private List<List<String>> string=new ArrayList<List<String>>();
-	
-	
+	private Map<Concept,List<Relationship>> cMap=new LinkedHashMap<Concept, List<Relationship>>();//Concept, List of Relationships
+	private Map<String,Concept> map=new LinkedHashMap<String, Concept>();//CUI,Concept
+	private Map<String,List<Concept[]>> relMap=new LinkedHashMap<String, List<Concept[]>>();//RELA,List of pairs of Concepts
+	private Map<String,String> lookupMap=new LinkedHashMap<String,String>();//STR,CUI
+	public static int STR=0;//In hindsight, this three lines
+	public static int RELA=1;//might have been better to implement
+	public static int CUI=2;//as an enumerator.
 	/**
 	 * @param CUI The Concept Identifier
 	 * @param STR The name or value of the CUI
 	 */
 	private Concept addTerm(String CUI, String STR){
+		
 		Concept c=new Concept(CUI,STR);
+		lookupMap.put(c.getSTR(),c.getCUI());
 		map.put(c.getCUI(),c);
-		if(!relMap.containsKey(c)) {
+		if(!cMap.containsKey(c)) {
 			List<Relationship> relatedTo=new ArrayList<Relationship>();
-			relMap.put(c,relatedTo);
+			cMap.put(c,relatedTo);
 		}
 		return c;
 	}
@@ -34,16 +41,68 @@ public class DatabaseManager {
 	 */
 	private Relationship addRelationship(Concept CUI1,String RELA,Concept CUI2){
 		Relationship r=new Relationship(CUI1, RELA, CUI2);
-		relMap.get(CUI1).add(r);
-		if(CUI1!=CUI2) {//avoids including self referential relationships twice.
-			relMap.get(CUI2).add(r);
+		cMap.get(CUI1).add(r);
+		if(!CUI1.equals(CUI2)) {//avoids including self referential relationships twice.
+			cMap.get(CUI2).add(r);
+		}
+		Concept[] c=new Concept[] {CUI1,CUI2};
+		if (relMap.containsKey(RELA)){
+			relMap.get(RELA).add(c);
+		}else {
+			List<Concept[]> temp=new ArrayList<Concept[]>();
+			temp.add(c);
+			relMap.put(RELA,temp);
 		}
 		return r;
 	}
 	public boolean hasCUI(String CUI) {
 		return map.containsKey(CUI);
 	}
+	public Vector<String> getVector(int i) {
+		if(i==STR) {
+			return new Vector<String>(lookupMap.keySet());
+		}
+		else if(i==RELA) {
+			return new Vector<String>(relMap.keySet());
+		}
+		else if(i==CUI) {
+			return new Vector<String>(map.keySet());
+		}
+		else{
+			return null;
+		}
+	}
 	
+	public String lookupR(String r) {
+		String x="";
+		List<Concept[]> list=relMap.get(r);
+		if (list!=null) {
+			for (Concept[] i:list) {
+				x+=i[0].getSTR()+","+r+","+i[1].getSTR()+"\n";
+			}
+		}
+		return x;
+	}
+	public String lookupC(String c) {
+		String x="";
+		List<Relationship> r=cMap.get(map.get(c));
+		if (r!=null) {
+			for(Relationship i:r) {
+				x+=i.toString()+"\n";
+			}
+		}
+		return x;
+	}
+	public String lookupT(String c) {
+		String x="";
+		List<Relationship> r=cMap.get(map.get(lookupMap.get(c)));//and the prize for most map lookups goes to...
+		if (r!=null) {
+			for(Relationship i:r) {
+				x+=i.toString()+"\n";
+			}
+		}
+		return x;
+	}
 	public Concept getConcept(Concept x) {
 		for(Concept i:map.values()) {
 			if (i.equals(x)){
@@ -52,6 +111,33 @@ public class DatabaseManager {
 		}
 		return null;
 		
+	}
+	public String writeCSV(int type,String val, File f) {
+		try {
+			f.createNewFile();
+			FileWriter csvWriter = new FileWriter(f);
+			csvWriter.append("STR1");
+			csvWriter.append(",");
+			csvWriter.append("RELA");
+			csvWriter.append(",");
+			csvWriter.append("STR2");
+			csvWriter.append("\n");
+			if (type==STR) {
+				csvWriter.append(lookupT(val));
+			}
+			if (type==RELA) {
+				csvWriter.append(lookupR(val));
+			}
+			if (type==CUI) {
+				csvWriter.append(lookupC(val));
+			}
+			csvWriter.flush();
+			csvWriter.close();
+			return f.toString();
+			
+		}catch(Exception e){
+			return "Export failed.";
+		}
 	}
 	public Concept getConcept(String CUI) {
 		return map.get(CUI);
@@ -64,7 +150,19 @@ public class DatabaseManager {
 	public String getSTR(String CUI) {
 		return map.get(CUI).getSTR();
 	}
-	
+	private boolean containsRelationship(String RELA,Concept CUI1,Concept CUI2) {
+		Concept[] c=new Concept[] {CUI1,CUI2};
+		List<Concept[]> concept=relMap.get(RELA);
+		if (concept==null) {
+			return false;
+		}
+		for(Concept[] i:concept) {
+			if (Arrays.deepEquals(c, i)){
+				return true;
+			}
+		}
+		return false;
+	}
 	public String readFile(File f) {
 		if (!f.isFile()) {
 			return f.toString()+" cannot be opened or is not a file.";
@@ -110,7 +208,7 @@ public class DatabaseManager {
 					if (hasCUI(lineC[0])) {
 						Concept c0=getConcept(lineC[0]);
 						Concept c1=getConcept(lineC[2]);
-						if (!Relationship.containsRelationship(lineC[1], c0, c1)) {
+						if (!containsRelationship(lineC[1], c0, c1)) {
 							Relationship r=addRelationship(c0, lineC[1], c1);
 							ctr++;
 							x+=r.toString()+"\n";
@@ -120,7 +218,6 @@ public class DatabaseManager {
 						Concept c=addTerm(lineC[0],lineC[0]);
 						Concept c1=getConcept(lineC[2]);
 						Relationship r=addRelationship(c, lineC[1], c1);
-						ctr3++;
 						ctr++;
 						w+="Warning "+ ++ctr3+"\t"+"Concept "+c.getCUI()+" could not be found. Created Temporary Concept.\n";
 						x+=r.toString()+"\n";
@@ -147,8 +244,5 @@ public class DatabaseManager {
 		}
 		
 	}
-	
-	
-	public void resetDatabase() {}
 
 }
